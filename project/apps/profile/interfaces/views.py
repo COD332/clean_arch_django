@@ -13,17 +13,17 @@ from .serializers import (
     UpdateDeviceSerializer,
     DeviceSerializer,
 )
-from ..use_cases.user_service import UserService
-from ..use_cases.device_service import DeviceService
-from ..infrastructure.django_user_repository import DjangoUserRepository
-from ..infrastructure.django_device_repository import DjangoDeviceRepository
+from ..use_cases.services_with_gateway import (
+    UserServiceWithGateway,
+    DeviceServiceWithGateway,
+    SessionServiceWithGateway
+)
 
 
-repo = DjangoUserRepository()
-user_service = UserService(repo)
-
-device_repo = DjangoDeviceRepository()
-device_service = DeviceService(device_repo)
+# Initialize services with gateway-based repositories
+user_service = UserServiceWithGateway()
+device_service = DeviceServiceWithGateway()
+session_service = SessionServiceWithGateway()
 
 
 class CreateUserView(APIView):
@@ -131,7 +131,7 @@ class CreateDeviceView(APIView):
         serializer = CreateDeviceSerializer(data=request.data)
         if serializer.is_valid():
             try:
-                device = device_service.create_device(
+                device = device_service.register_device(
                     username=request.user.username,
                     **serializer.validated_data
                 )

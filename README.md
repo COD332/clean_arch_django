@@ -1,4 +1,4 @@
-# 🏗️ Entity-Driven Clean Architecture
+# 🏗️ DTO/Gateway Clean Architecture
 
 <div align="center">
   
@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/Clean%20Architecture-✅-brightgreen?style=for-the-badge" alt="Clean Architecture"/>
   <img src="https://img.shields.io/badge/Test%20Coverage-100%25-brightgreen?style=for-the-badge" alt="Test Coverage"/>
 
-  <h3>🚀 Revolutionary Django Development with Zero Code Duplication</h3>
+  <h3>🚀 Advanced Django Development with DTO/Gateway Pattern</h3>
   
 </div>
 
@@ -21,8 +21,8 @@
 
 | Language | زبان | Documentation | مستندات |
 |----------|------|---------------|---------|
-| 🇺🇸 **English** | English | [📖 Read Documentation](./README-EN.md) | English Docs |
-| 🇮🇷 **Persian** | فارسی | [📚 خواندن مستندات](./README-FA.md) | مستندات فارسی |
+| 🇺🇸 **English** | English | [📖 Read Documentation](./README-en.md) | English Docs |
+| 🇮🇷 **Persian** | فارسی | [📚 خواندن مستندات](./README-fa.md) | مستندات فارسی |
 
 </div>
 
@@ -32,9 +32,9 @@
 
 <div align="center">
 
-A Django application implementing **Clean Architecture** with an innovative **Entity-Driven Model System** that automatically generates Django models from domain entities.
+A Django application implementing **Clean Architecture** with an innovative **DTO/Gateway Pattern** that provides explicit separation between domain entities, data transfer objects, and infrastructure models.
 
-یک اپلیکیشن جنگو با پیاده‌سازی **Clean Architecture** و سیستم نوآورانه **Entity-Driven Model** که به صورت خودکار مدل‌های جنگو را تولید می‌کند.
+یک اپلیکیشن جنگو با پیاده‌سازی **Clean Architecture** و الگوی نوآورانه **DTO/Gateway** که جداسازی صریح بین انتیتی‌های دامنه، اشیاء انتقال داده و مدل‌های زیرساخت ارائه می‌دهد.
 
 </div>
 
@@ -44,12 +44,12 @@ A Django application implementing **Clean Architecture** with an innovative **En
 
 | Feature | English | Persian | فارسی |
 |---------|---------|---------|-------|
-| 🤖 | Automatic Model Generation | تولید خودکار مدل‌ها | ✅ |
-| 🧠 | Smart Type Mapping | نقشه‌برداری هوشمند تایپ‌ها | ✅ |
-| 📚 | Centralized Registry | رجیستری متمرکز | ✅ |
-| 🎛️ | Auto Admin Interface | رابط مدیریت خودکار | ✅ |
-| 🚀 | 75% Faster Development | ۷۵٪ سریع‌تر توسعه | ✅ |
-| 💎 | Zero Code Duplication | صفر تکرار کد | ✅ |
+| 🏗️ | DTO/Gateway Pattern | الگوی DTO/Gateway | ✅ |
+| 🧠 | Explicit Data Transformations | تبدیلات صریح داده | ✅ |
+| 🔧 | Clean Separation of Concerns | جداسازی تمیز مسئولیت‌ها | ✅ |
+| 📚 | Gateway-based Repositories | Repository های مبتنی بر Gateway | ✅ |
+| 🚀 | High Maintainability | قابلیت نگهداری بالا | ✅ |
+| 💎 | Testable Architecture | معماری قابل تست | ✅ |
 
 </div>
 
@@ -59,24 +59,22 @@ A Django application implementing **Clean Architecture** with an innovative **En
 
 <div align="center">
 
-### Before | قبل
+### Before (Entity-Driven) | قبل (Entity-Driven)
 ```
-❌ Entity Definition
-❌ Model Definition (Duplicate)
-❌ Manual Admin Setup
-❌ Repository Implementation
-❌ Type Mapping Issues
-⏱️ 30+ minutes per feature
+❌ Hidden Data Transformations
+❌ Automatic Model Generation
+❌ Generic Conversion Logic
+❌ Implicit Dependencies
+⏱️ Less Control over Data Flow
 ```
 
-### After | بعد
+### After (DTO/Gateway) | بعد (DTO/Gateway)
 ```
-✅ Entity Definition Only
-✅ Auto-Generated Models
-✅ Auto-Generated Admin
-✅ Auto-Generated Repositories
-✅ Smart Type Mapping
-⏱️ 2.5 minutes per feature
+✅ Explicit Data Transformations
+✅ Hand-crafted Models
+✅ Gateway-based Conversions
+✅ Clear Layer Boundaries
+⏱️ Full Control over Data Flow
 ```
 
 </div>
@@ -94,24 +92,35 @@ class DeviceEntity:
     name: str
     device_type: str
     platform: str
+    username: str
     is_active: bool = True
 ```
 
-### 2️⃣ Register Model | ثبت مدل
+### 2️⃣ Create DTO | ایجاد DTO
 ```python
-Device = ModelRegistry.register_model(
-    entity_class=DeviceEntity,
-    model_name='Device'
-)
+@dataclass
+class DeviceDTO:
+    id: Optional[int] = None
+    name: str = ''
+    device_type: str = ''
+    platform: str = ''
+    user_id: Optional[int] = None
+    is_active: bool = True
 ```
 
-### 3️⃣ Generate Admin | تولید پنل مدیریت
+### 3️⃣ Implement Gateway | پیاده‌سازی Gateway
 ```python
-register_entity_admin(Device, DeviceEntity)
+class DeviceGateway:
+    @staticmethod
+    def entity_to_dto(entity: DeviceEntity, user_id: int) -> DeviceDTO:
+        return DeviceDTO(name=entity.name, user_id=user_id, ...)
 ```
 
-### 🎉 Done! | تمام!
-**Complete feature in 2.5 minutes | فیچر کامل در ۲.۵ دقیقه**
+### 🎉 Use Services | استفاده از سرویس‌ها
+```python
+device_service = DeviceServiceWithGateway()
+device = device_service.register_device("iPhone", "mobile", "iOS", "john")
+```
 
 </div>
 
@@ -123,11 +132,12 @@ register_entity_admin(Device, DeviceEntity)
 
 | Metric | Value | معیار | مقدار |
 |--------|-------|-------|-------|
-| 📉 Code Duplication | 0% | تکرار کد | ۰٪ |
-| 🚀 Development Speed | 75% faster | سرعت توسعه | ۷۵٪ سریع‌تر |
+| 🏗️ Architecture Pattern | DTO/Gateway | الگوی معماری | DTO/Gateway |
 | 🧪 Test Coverage | 100% | پوشش تست | ۱۰۰٪ |
 | 🔒 Type Safety | Full | ایمنی تایپ | کامل |
-| 🎯 Clean Architecture | Maintained | Clean Architecture | حفظ شده |
+| 🎯 Clean Architecture | Enhanced | Clean Architecture | بهبود یافته |
+| 🔧 Maintainability | High | قابلیت نگهداری | بالا |
+| 🧩 Testability | Excellent | قابلیت تست | عالی |
 
 </div>
 
@@ -140,7 +150,7 @@ register_entity_admin(Device, DeviceEntity)
 | Category | Technologies | دسته‌بندی | فناوری‌ها |
 |----------|-------------|----------|-----------|
 | Backend | Django 5.0+, Python 3.11+ | بک‌اند | Django 5.0+, Python 3.11+ |
-| Architecture | Clean Architecture, DDD | معماری | Clean Architecture, DDD |
+| Architecture | Clean Architecture, DTO/Gateway | معماری | Clean Architecture, DTO/Gateway |
 | Testing | Unit Tests, Integration Tests | تست | تست واحد، تست یکپارچگی |
 | Database | PostgreSQL, SQLite | پایگاه داده | PostgreSQL, SQLite |
 | Development | Poetry, Docker | توسعه | Poetry, Docker |
@@ -165,7 +175,9 @@ register_entity_admin(Device, DeviceEntity)
 
 | English | Persian |
 |---------|---------|
-| [🏗️ Entity-Driven Models](./ENTITY_DRIVEN_MODELS-EN.md) | [🏗️ مدل‌های Entity-Driven](./ENTITY_DRIVEN_MODELS_FA.md) |
+| [🏗️ DTO/Gateway Architecture](./DTO_GATEWAY_ARCHITECTURE.md) | [🏗️ معماری DTO/Gateway](./DTO_GATEWAY_ARCHITECTURE_FA.md) |
+| [📋 Migration Summary](./MIGRATION_SUMMARY.md) | [📋 خلاصه مهاجرت](./MIGRATION_SUMMARY_FA.md) |
+| [📁 Final Project Structure](./FINAL_PROJECT_STRUCTURE.md) | [📁 ساختار نهایی پروژه](./FINAL_PROJECT_STRUCTURE_FA.md) |
 
 ---
 

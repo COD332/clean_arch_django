@@ -1,4 +1,4 @@
-# 🏗️ پروژه Entity-Driven Clean Architecture
+# 🏗️ معماری تمیز DTO/Gateway
 
 <div align="center">
   <img src="https://img.shields.io/badge/Django-5.0+-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django"/>
@@ -11,53 +11,91 @@
 
 ## 🎯 خلاصه پروژه
 
-یک اپلیکیشن جنگو با پیاده‌سازی **Clean Architecture** و سیستم نوآورانه **Entity-Driven Model** که به صورت خودکار مدل‌های جنگو را از Entity های دامنه تولید می‌کند، تکرار کد را حذف کرده و سازگاری را تضمین می‌کند.
+یک اپلیکیشن جنگو با پیاده‌سازی **Clean Architecture** و الگوی نوآورانه **DTO/Gateway** که جداسازی صریح بین انتیتی‌های دامنه، اشیاء انتقال داده و مدل‌های زیرساخت ارائه می‌دهد و حداکثر قابلیت نگهداری و تست‌پذیری را تضمین می‌کند.
 
-> 🚀 **انقلاب در توسعه**: از ۲.۵ دقیقه تا یک فیچر کامل!
+> 🚀 **معماری پیشرفته**: کنترل کامل بر تبدیلات داده بین لایه‌ها!
 
 ---
 
 ## ✨ نوآوری‌های کلیدی
 
-### 🤖 1. تولید خودکار مدل‌ها
-```python
-# کافیست یک Entity تعریف کنید...
-@dataclass
-class DeviceEntity:
-    name: str                    # → CharField(max_length=255)
-    device_type: str            # → CharField(max_length=255)
-    platform: str               # → CharField(max_length=255)
-    is_active: bool = True      # → BooleanField(default=True)
+### 🏗️ 1. الگوی DTO/Gateway
+- **انتیتی‌ها**: اشیاء کسب‌وکار خالص بدون نگرانی‌های زیرساخت
+- **DTOها**: اشیاء انتقال داده برای ارتباط بین لایه‌ها
+- **Gateway ها**: منطق تبدیل صریح بین انتیتی‌ها، DTOها و مدل‌ها
+- **مدل‌ها**: مدل‌های جنگو دست‌ساز بهینه شده برای عملیات پایگاه داده
+
+### 🔄 2. جریان داده صریح
+```
+انتیتی دامنه ↔ DTO ↔ مدل جنگو ↔ پایگاه داده
+       ↑         ↑         ↑
+   Gateway   Gateway   Gateway
 ```
 
-### 🧠 2. نقشه‌برداری هوشمند تایپ‌ها
+### 🧠 3. جداسازی تمیز مسئولیت‌ها
 <details>
-<summary>👁️ مشاهده جزئیات نقشه‌برداری</summary>
+<summary>👁️ مشاهده مسئولیت‌های لایه‌ها</summary>
 
-| نوع پایتون | نوع Django | ویژگی |
-|------------|-----------|--------|
-| `str` | `CharField(max_length=255)` | ✅ |
-| `bool` | `BooleanField()` | ✅ |
-| `Optional[int]` | `IntegerField(null=True)` | ✅ |
-| `datetime` | `DateTimeField(auto_now_add=True)` | ✅ |
+| لایه | مسئولیت | مزایا |
+|------|----------|-------|
+| **دامنه** | منطق کسب‌وکار خالص | قابل تست، قابل استفاده مجدد |
+| **DTO** | انتقال داده بین لایه‌ها | ایمن از نظر تایپ، صریح |
+| **زیرساخت** | عملیات پایگاه داده | بهینه، قابل نگهداری |
+| **Gateway** | تبدیلات داده | جداگانه، قابل تست |
 
 </details>
 
-### 📚 3. رجیستری متمرکز مدل‌ها
 ```python
-# یکبار ثبت کنید، همه جا استفاده کنید
-Device = ModelRegistry.register_model(
-    entity_class=DeviceEntity,
-    model_name='Device',
-    additional_fields={'user': models.ForeignKey(User, ...)},
-    meta_options={'unique_together': ('name', 'user')}
-)
+# انتیتی دامنه (منطق کسب‌وکار خالص)
+@dataclass
+class DeviceEntity:
+    name: str
+    device_type: str
+    platform: str
+    username: str
+    is_active: bool = True
+
+# DTO (انتقال داده)
+@dataclass
+class DeviceDTO:
+    id: Optional[int] = None
+    name: str = ''
+    device_type: str = ''
+    platform: str = ''
+    user_id: Optional[int] = None
+    is_active: bool = True
+
+# مدل جنگو (ماندگاری در پایگاه داده)
+class Device(models.Model):
+    name = models.CharField(max_length=255)
+    device_type = models.CharField(max_length=100)
+    platform = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
 ```
 
-### 🎛️ 4. تولید خودکار پنل مدیریت
+### 🔧 4. تبدیلات مبتنی بر Gateway
 ```python
-# تنها یک خط کد برای پنل مدیریت کامل
-register_entity_admin(Device, DeviceEntity)
+class DeviceGateway:
+    @staticmethod
+    def entity_to_dto(entity: DeviceEntity, user_id: int) -> DeviceDTO:
+        return DeviceDTO(
+            name=entity.name,
+            device_type=entity.device_type,
+            platform=entity.platform,
+            user_id=user_id,
+            is_active=entity.is_active
+        )
+    
+    @staticmethod
+    def dto_to_model(dto: DeviceDTO) -> Device:
+        return Device(
+            name=dto.name,
+            device_type=dto.device_type,
+            platform=dto.platform,
+            user_id=dto.user_id,
+            is_active=dto.is_active
+        )
 ```
 
 ---

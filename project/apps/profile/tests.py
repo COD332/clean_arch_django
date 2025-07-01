@@ -3,10 +3,18 @@ from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from apps.profile.models import Device
-from apps.profile.domain.entities import DeviceEntity
-from apps.profile.infrastructure.django_device_repository import DjangoDeviceRepository
-from apps.profile.use_cases.device_service import DeviceService
+from apps.profile.models import Device, Session
+from apps.profile.domain.entities import DeviceEntity, SessionEntity
+from apps.profile.infrastructure.django_repositories_with_gateway import (
+    DjangoUserRepositoryWithGateway, 
+    DjangoDeviceRepositoryWithGateway,
+    DjangoSessionRepositoryWithGateway
+)
+from apps.profile.use_cases.services_with_gateway import (
+    UserServiceWithGateway, 
+    DeviceServiceWithGateway,
+    SessionServiceWithGateway
+)
 
 class DeviceEntityTestCase(TestCase):
     def test_device_entity_creation(self):
@@ -25,7 +33,7 @@ class DeviceEntityTestCase(TestCase):
 class DeviceRepositoryTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="testuser", email="test@example.com")
-        self.repo = DjangoDeviceRepository()
+        self.repo = DjangoDeviceRepositoryWithGateway()
 
     def test_add_device(self):
         device = DeviceEntity(
@@ -55,11 +63,10 @@ class DeviceRepositoryTestCase(TestCase):
 class DeviceServiceTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="testuser", email="test@example.com")
-        self.repo = DjangoDeviceRepository()
-        self.service = DeviceService(self.repo)
+        self.service = DeviceServiceWithGateway()
 
     def test_create_device(self):
-        device = self.service.create_device(
+        device = self.service.register_device(
             name="iPhone 15",
             device_type="mobile",
             platform="iOS",
@@ -70,7 +77,7 @@ class DeviceServiceTestCase(TestCase):
 
     def test_duplicate_device_name_error(self):
         # Create first device
-        self.service.create_device(
+        self.service.register_device(
             name="iPhone 15",
             device_type="mobile",
             platform="iOS",
@@ -79,7 +86,7 @@ class DeviceServiceTestCase(TestCase):
         
         # Try to create device with same name
         with self.assertRaises(ValueError):
-            self.service.create_device(
+            self.service.register_device(
                 name="iPhone 15",
                 device_type="tablet",
                 platform="iOS",
