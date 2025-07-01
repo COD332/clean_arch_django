@@ -328,7 +328,7 @@ A **production-ready, scalable, and maintainable** Django application that serve
 
 <p align="center">
   Made with ❤️ and Django | 
-  <a href="https://github.com/yourusername/clean_arch_project">⭐ Give it a star</a>
+  <a href="https://github.com/cod332/clean_arch_django">⭐ Give it a star</a>
 </p>
 
 </div>

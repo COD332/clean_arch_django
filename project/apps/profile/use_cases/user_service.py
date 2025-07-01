@@ -1,6 +1,6 @@
 from .user_service_base import UserServiceBase
-from profile_app.domain.repositories import UserRepository
-from profile_app.domain.entities import UserEntity
+from apps.profile.domain.repositories import UserRepository
+from apps.profile.domain.entities import UserEntity
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 

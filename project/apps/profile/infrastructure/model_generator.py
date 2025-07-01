@@ -75,7 +75,7 @@ class EntityToModelConverter:
         model_attrs = {
             **model_fields,
             'Meta': Meta,
-            '__module__': 'profile_app.models',
+            '__module__': 'apps.profile.models',
             '__str__': cls._create_str_method(model_name),
         }
         

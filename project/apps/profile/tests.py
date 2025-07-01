@@ -3,10 +3,10 @@ from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from profile_app.models import Device
-from profile_app.domain.entities import DeviceEntity
-from profile_app.infrastructure.django_device_repository import DjangoDeviceRepository
-from profile_app.use_cases.device_service import DeviceService
+from apps.profile.models import Device
+from apps.profile.domain.entities import DeviceEntity
+from apps.profile.infrastructure.django_device_repository import DjangoDeviceRepository
+from apps.profile.use_cases.device_service import DeviceService
 
 class DeviceEntityTestCase(TestCase):
     def test_device_entity_creation(self):

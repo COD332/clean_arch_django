@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
-from profile_app.domain.entities import UserEntity
-from profile_app.domain.repositories import UserRepository
+from apps.profile.domain.entities import UserEntity
+from apps.profile.domain.repositories import UserRepository
 
 class DjangoUserRepository(UserRepository):
     def add(self, user: UserEntity) -> UserEntity:

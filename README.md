@@ -171,7 +171,7 @@ register_entity_admin(Device, DeviceEntity)
 
 <p align="center">
   <strong>Made with ❤️ and Django | ساخته شده با ❤️ و جنگو</strong><br>
-  <a href="https://github.com/yourusername/clean_arch_project">⭐ Give it a star | ستاره دهید</a>
+  <a href="https://github.com/cod332/clean_arch_django">⭐ Give it a star | ستاره دهید</a>
 </p>
 
 </div>

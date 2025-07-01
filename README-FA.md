@@ -308,7 +308,7 @@ python manage.py makemigrations && python manage.py migrate
 
 <p align="center">
   ساخته شده با ❤️ و جنگو | 
-  <a href="https://github.com/yourusername/clean_arch_project">⭐ ستاره دهید</a>
+  <a href="https://github.com/cod332/clean_arch_django">⭐ ستاره دهید</a>
 </p>
 
 </div>

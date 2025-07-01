@@ -1,6 +1,6 @@
 from .device_service_base import DeviceServiceBase
-from profile_app.domain.repositories import DeviceRepository
-from profile_app.domain.entities import DeviceEntity
+from apps.profile.domain.repositories import DeviceRepository
+from apps.profile.domain.entities import DeviceEntity
 from typing import List
 
 class DeviceService(DeviceServiceBase):

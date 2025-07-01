@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
-from profile_app.models import Device
-from profile_app.domain.entities import DeviceEntity
-from profile_app.domain.repositories import DeviceRepository
+from apps.profile.models import Device
+from apps.profile.domain.entities import DeviceEntity
+from apps.profile.domain.repositories import DeviceRepository
 from .entity_mapper import EntityModelMapper
 from typing import List
 

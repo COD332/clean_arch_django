@@ -26,5 +26,5 @@ urlpatterns = [
     path('redoc/',  schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
     # Your API:
-    path('api/profile/', include('profile_app.interfaces.urls')),
+    path('api/profile/', include('apps.profile.interfaces.urls')),
 ]

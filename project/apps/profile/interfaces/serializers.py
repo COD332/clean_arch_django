@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from profile_app.models import Device
+from apps.profile.models import Device
 
 class CreateUserSerializer(serializers.Serializer):
     username = serializers.CharField()
